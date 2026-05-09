@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { Image, Text } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Tab bar icon using a local image
 function TabIcon({ source, label, focused }) {
   return (
     <>
@@ -17,6 +17,8 @@ function TabIcon({ source, label, focused }) {
 }
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
@@ -25,8 +27,9 @@ export default function TabLayout() {
         tabBarStyle: {
           borderTopWidth: 0.5,
           borderTopColor: "#e5e7eb",
-          height: 60,
-          paddingBottom: 6,
+          // Height = icon area + bottom safe area (home indicator / nav buttons)
+          height: 56 + insets.bottom,
+          paddingBottom: insets.bottom,
           paddingTop: 6,
         },
       }}
@@ -36,7 +39,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              source={require("../../assets/images/icon-instructions.png")} // placeholder
+              source={require("../../assets/images/icon-instructions.png")}
               label="Info"
               focused={focused}
             />
@@ -48,7 +51,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              source={require("../../assets/images/icon-map.png")} // placeholder
+              source={require("../../assets/images/icon-map.png")}
               label="Map"
               focused={focused}
             />
@@ -60,7 +63,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              source={require("../../assets/images/icon-punchbowl.png")} // placeholder
+              source={require("../../assets/images/icon-punchbowl.png")}
               label="Punchbowl"
               focused={focused}
             />
@@ -72,7 +75,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon
-              source={require("../../assets/images/icon-sealrock.png")} // placeholder
+              source={require("../../assets/images/icon-sealrock.png")}
               label="Seal Rock"
               focused={focused}
             />
