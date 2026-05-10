@@ -11,6 +11,8 @@ export function TypeBadge({ type }) {
     special: { bg: "#E6F1FB", text: "#0C447C", label: "Special" },
     group:   { bg: "#E8F0FE", text: "#185FA5", label: "Group" }
   };
+
+  
   const s = styles[type] || styles.single;
   return (
     <View style={{ backgroundColor: s.bg, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 4, alignSelf: "flex-start" }}>
@@ -27,6 +29,28 @@ const EVENT_TYPES = [
   { type: "group", desc: "Completed with all players present. Participation is required." }
 ];
 
+const SCHEDULE = [
+  { time: "10:00am", title: "Kickoff Challenge - Nye Beach" },
+  { time: "12:30pm", title: "Lunch - Georgie's Beachside Grill" },
+  { time: "1:30pm", title: "Ocean to Bay Trail - Challenge + Bonus Reveal" },
+  { time: "6:30pm", title: "Dinner, Debrief, and a Final Word From Our Special Guest Judge" },
+  { time: "7:30pm", title: "The Final Challenge, Sunset Pictionary - Nye Beach (10pts/ea)" },
+];
+
+function TimelineItem({ time, title, isLast }) {
+  return (
+    <View style={styles.timelineRow}>
+      <View style={styles.timelineLeft}>
+        <Text style={styles.timelineTimeText}>{time}</Text>
+        <View style={styles.timelinePoint} />
+        {!isLast && <View style={styles.timelineLine} />}
+      </View>
+      <View style={styles.timelineCard}>
+        <Text style={styles.timelineTitle}>{title}</Text>
+      </View>
+    </View>
+  );
+}
 export default function InstructionsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: "#f8f7f4" }}>
@@ -76,18 +100,21 @@ export default function InstructionsScreen() {
             <Text style={styles.ruleText}>3. <Text style={{fontWeight: '700'}}>Dinner Council:</Text> Meet at 6:30 for dinner, debrief, and the Final Word from the Guest Judge.</Text>
           </View>
         </View>
+                {/* SCHEDULE SECTION ─── */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Schedule</Text>
-          <View style={{ gap: 10 }}>
-            <Text style={styles.typeDesc}>
-10:00am- Go to Nye beach for a kickoff challenge!
-12:30pm- Go to Georgie's beachside grill for lunch and lunch challenge
-1:30- head to ocean to bay trail for challenge and bonus prize reveal
-6:30- Go to chosen dinner location for dinner, debrief, and the final word from our special guest judge
-7:30- The final challenge! Meet back at Nye beach for a sunset game of pictionary, 10 points per game!
-            </Text>
+          <Text style={styles.sectionLabel}>The Schedule</Text>
+          <View style={styles.timelineContainer}>
+            {SCHEDULE.map((item, index) => (
+              <TimelineItem
+                key={index}
+                time={item.time}
+                title={item.title}
+                isLast={index === SCHEDULE.length - 1}
+              />
+            ))}
           </View>
         </View>
+
 
 
         <View style={styles.section}>
@@ -121,5 +148,15 @@ const styles = StyleSheet.create({
   guideText: { fontSize: 12, color: '#64748b', lineHeight: 18 },
   ruleText: { fontSize: 13, color: '#92400e', lineHeight: 20 },
   typeRow: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#ffffff", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "#ede9e2" },
-  typeDesc: { flex: 1, fontSize: 12, color: "#6b7280", lineHeight: 17 }
+  typeDesc: { flex: 1, fontSize: 12, color: "#6b7280", lineHeight: 17 },
+  // Timeline Styles
+  timelineContainer: { paddingLeft: 8 },
+  timelineRow: { flexDirection: 'row', minHeight: 60 },
+  timelineLeft: { width: 70, alignItems: 'center', position: 'relative' },
+  timelineTimeText: { fontSize: 10, fontWeight: '700', color: '#64748b', textAlign: 'right', width: 60, marginRight: 20, marginTop: 2 },
+  timelinePoint: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#7ecfbd', position: 'absolute', right: -5, top: 4, zIndex: 2, borderWidth: 2, borderColor: '#f8f7f4' },
+  timelineLine: { width: 2, position: 'absolute', right: -1, top: 4, bottom: -10, backgroundColor: '#e2e8f0', zIndex: 1 },
+  timelineCard: { flex: 1, marginLeft: 25, backgroundColor: 'white', padding: 12, borderRadius: 10, marginBottom: 12, borderWidth: 1, borderColor: '#ede9e2', elevation: 1, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 2, shadowOffset: { width: 0, height: 2 } },
+  timelineTitle: { fontSize: 13, fontWeight: '600', color: '#1e293b' },
+
 });

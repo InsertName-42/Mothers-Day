@@ -1,3 +1,27 @@
+// tasks.js
+
+// 1. Pre-cache icon references to prevent lag during map interactions
+const Icons = {
+  believeOrNot: require("../assets/images/believeOrNot.webp"),
+  candy: require("../assets/images/candy.webp"),
+  seal: require("../assets/images/seal.webp"),
+  oceanTrail: require("../assets/images/oceanTrail.webp"),
+  seaLion: require("../assets/images/seaLion.webp"),
+  tidepools: require("../assets/images/tidepools.webp"),
+  lighthouse: require("../assets/images/lighthouse.webp"),
+  lunch: require("../assets/images/lunch.webp"),
+  paint: require("../assets/images/paint.webp"),
+  devilsPunchbowl: require("../assets/images/devilsPunchbowl.webp"),
+  artCenter: require("../assets/images/artCenter.webp"),
+  scienceCenter: require("../assets/images/scienceCenter.webp"),
+  seaGlass: require("../assets/images/seaGlass.webp"),
+  whale: require("../assets/images/whale.webp"),
+  sandCastle: require("../assets/images/sandCastle.webp"),
+  camera: require("../assets/images/camera.webp"),
+  bonus: require("../assets/images/bonus.webp"),
+  rockFace: require("../assets/images/rockFace.webp"),
+};
+
 export const TASKS = [
   {
     id: 1,
@@ -5,8 +29,8 @@ export const TASKS = [
     type: "single",
     score: 30,
     desc: "Recreate the poses of four different statues outside of Ripley Believe it or Not.",
-    x: 28, y: 35,
-    image: require("../assets/images/believeOrNot.jpg")
+    x: 51.6, y: 59.7,
+    image: Icons.believeOrNot
   },
   {
     id: 15,
@@ -14,8 +38,8 @@ export const TASKS = [
     type: "single",
     score: 45,
     desc: "Try taffy from Newport Candy Shoppe and Newport Candy Basket and add your vote to the discourse.",
-    x: 30, y: 30,
-    image: require("../assets/images/candy.jpg")
+    x: 38.6, y: 59.7,
+    image: Icons.candy
   },
   {
     id: 11,
@@ -23,8 +47,8 @@ export const TASKS = [
     type: "single",
     score: 50,
     desc: "Enjoy the natural beauty of seal rock (and don’t forget to check out the bonus challenge).",
-    x: 14, y: 60,
-    image: require("../assets/images/seal.jpg")
+    x: 20, y: 10,
+    image: Icons.seal
   },
   {
     id: 6,
@@ -32,8 +56,8 @@ export const TASKS = [
     type: "single",
     score: 50,
     desc: "Hike the beautiful Ocean Bay Trail for .67 miles, and attempt to spot the most fungi.",
-    x: 20, y: 42,
-    image: require("../assets/images/oceanTrail.jpg")
+    x: 51.4, y: 15,
+    image: Icons.oceanTrail
   },
   {
     id: 4,
@@ -41,8 +65,8 @@ export const TASKS = [
     type: "single",
     score: 30,
     desc: "Spot a sea lion at the sea lion docks.",
-    x: 22, y: 32,
-    image: require("../assets/images/seaLion.jpg")
+    x: 58.1, y: 59.9,
+    image: Icons.seaLion
   },
   {
     id: 3,
@@ -50,8 +74,8 @@ export const TASKS = [
     type: "single",
     score: 75,
     desc: "Find a sea urchin and a sea anemone plus one of starfish or sea cucumber at Yaquina Head outstanding natural area.",
-    x: 18, y: 14,
-    image: require("../assets/images/tidepools.jpg")
+    x: 12, y: 13.3,
+    image: Icons.tidepools
   },
   {
     id: 16,
@@ -59,8 +83,8 @@ export const TASKS = [
     type: "single",
     score: 25,
     desc: "Pose as a lighthouse with Yaquina Head lighthouse.",
-    x: 16, y: 18,
-    image: require("../assets/images/lighthouse.jpg")
+    x: 7, y: 10.1,
+    image: Icons.lighthouse
   },
   {
     id: 17,
@@ -68,8 +92,8 @@ export const TASKS = [
     type: "single",
     score: 30,
     desc: "Meet at 12:30 and have a unique order at Georgie’s beachside grill.",
-    x: 25, y: 48,
-    image: require("../assets/images/lunch.jpg")
+    x: 20.3, y: 62.4,
+    image: Icons.lunch
   },
   {
     id: 14,
@@ -78,8 +102,9 @@ export const TASKS = [
     minutes: 30,
     score: 75,
     desc: "Explore 3 art galleries for 10 minutes each.",
-    x: 36, y: 56,
-    image: require("../assets/images/paint.jpg")
+    x: 39.4, y: 40.3,
+    image: Icons.paint,
+    glow: true
   },
   {
     id: 9,
@@ -88,8 +113,8 @@ export const TASKS = [
     minutes: 10,
     score: 60,
     desc: "Soak up the dangerous beauty of Devils Punchbowl Natural Area for at least 10 minutes.",
-    x: 15, y: 23,
-    image: require("../assets/images/devilsPunchbowl.jpg")
+    x: 50, y: 2.5,
+    image: Icons.devilsPunchbowl
   },
   {
     id: 7,
@@ -98,8 +123,8 @@ export const TASKS = [
     minutes: 15,
     score: 30,
     desc: "Explore Newport Visual arts center for at least 15 minutes.",
-    x: 28, y: 53,
-    image: require("../assets/images/artCenter.jpg")
+    x: 34.5, y: 41,
+    image: Icons.artCenter
   },
   {
     id: 8,
@@ -108,8 +133,8 @@ export const TASKS = [
     minutes: 25,
     score: 35,
     desc: "Spend 25 minutes in Hatfield Marine Science visitor center ($5 per person)",
-    x: 48, y: 68,
-    image: require("../assets/images/scienceCenter.jpg")
+    x: 53.9, y: 69.6,
+    image: Icons.scienceCenter
   },
   {
     id: 13,
@@ -117,8 +142,9 @@ export const TASKS = [
     type: "head",
     score: 60,
     desc: "Find the most sea glass on Newport's beaches.",
-    x: 14, y: 50,
-    image: require("../assets/images/seaGlass.jpg")
+    x: 38.1, y: 22.6,
+    image: Icons.seaGlass,
+    glow: true
   },
   {
     id: 12,
@@ -126,8 +152,9 @@ export const TASKS = [
     type: "head",
     score: 60,
     desc: "Take the most selfies with murals featuring whales.",
-    x: 35, y: 33,
-    image: require("../assets/images/whale.jpg")
+    x: 62.3, y: 32.6,
+    image: Icons.whale,
+    glow: true
   },
   {
     id: 5,
@@ -135,8 +162,8 @@ export const TASKS = [
     type: "judge",
     score: 100,
     desc: "For the kickoff challenge! Build the best sand castle at Nye beach!",
-    x: 35.6, y: 36.8,
-    image: require("../assets/images/sandCastle.jpg")
+    x: 35.6, y: 36.9,
+    image: Icons.sandCastle
   },
   {
     id: 18,
@@ -144,8 +171,9 @@ export const TASKS = [
     type: "single",
     score: 50,
     desc: "Take the goofiest and most Newport group photo",
-    x: 40, y: 40,
-    image: require("../assets/images/camera.jpg")
+    x: 30.7, y: 70.4,
+    image: Icons.camera,
+    glow: true
   },
   {
     id: 19,
@@ -153,8 +181,17 @@ export const TASKS = [
     type: "judge",
     score: 50,
     desc: "Photograph a seal at seal rock.",
-    x: 50, y: 50,
-    image: require("../assets/images/bonus.jpg")
+    x: 77, y: 31,
+    image: Icons.bonus
+  },
+  {
+    id: 20,
+    title: "Rock Face",
+    type: "single",
+    score: 10,
+    desc: "Take a photo with the face in the rock.",
+    x: 13.9, y: 59.6,
+    image: Icons.rockFace
   }
 ];
 

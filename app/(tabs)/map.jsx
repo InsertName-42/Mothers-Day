@@ -36,8 +36,18 @@ export default function MapScreen() {
   }, []);
 
   const findClosestPOI = (pctX, pctY) => {
-    const currentPOI = activeTab === 'punchbowl' ? 9 : (activeTab === 'sealrock' ? 11 : null);
-    const tasksToSearch = activeTab === 'map' ? TASKS : TASKS.filter(t => t.id === currentPOI);
+    const punchbowlIDs = [9]; 
+    const sealRockIDs = [11, 19]; 
+
+    let tasksToSearch = [];
+    if (activeTab === 'map') {
+      tasksToSearch = TASKS.filter(t => !punchbowlIDs.includes(t.id) && !sealRockIDs.includes(t.id));
+    } else if (activeTab === 'punchbowl') {
+      tasksToSearch = TASKS.filter(t => punchbowlIDs.includes(t.id));
+    } else if (activeTab === 'sealrock') {
+      tasksToSearch = TASKS.filter(t => sealRockIDs.includes(t.id));
+    }
+
     let closest = null;
     let minDistance = 8; 
     tasksToSearch.forEach(t => {
@@ -62,7 +72,8 @@ export default function MapScreen() {
       } else {
         const dropY = pageY - 80;
         const index = Math.max(0, Math.floor(dropY / 75));
-        moveTask(agenda.findIndex(t => t.id === dragTask.id), index);
+        const oldIdx = agenda.findIndex(t => t.id === dragTask.id);
+        if (oldIdx !== -1) moveTask(oldIdx, index);
       }
     }
     setDragging(false); setDragTask(null); setDragSource(null);
@@ -71,7 +82,6 @@ export default function MapScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0f172a" }} edges={['top']}>
       <View style={{ flex: 1 }} 
-        // THIS IS THE FIX: Hijack touch responder from ZoomableView when dragging
         onStartShouldSetResponder={() => dragging}
         onMoveShouldSetResponder={() => dragging}
         onTouchMove={(e) => { 
@@ -113,18 +123,12 @@ export default function MapScreen() {
                 contentFit={activeTab === 'map' ? "contain" : "cover"} 
               />
               {TASKS.map((t) => {
-                // 1. Define which IDs belong to which postcard tab
                 const punchbowlIDs = [9]; 
-                const sealRockIDs = [11, 19]; // Added 19 as an exception here
-
-                // 2. Visibility Logic
+                const sealRockIDs = [11, 19]; 
                 let shouldShow = false;
 
                 if (activeTab === 'map') {
-                  // Hide postcard-specific tasks from the main overview map
-                  if (!punchbowlIDs.includes(t.id) && !sealRockIDs.includes(t.id)) {
-                    shouldShow = true;
-                  }
+                  if (!punchbowlIDs.includes(t.id) && !sealRockIDs.includes(t.id)) shouldShow = true;
                 } else if (activeTab === 'punchbowl') {
                   if (punchbowlIDs.includes(t.id)) shouldShow = true;
                 } else if (activeTab === 'sealrock') {
@@ -133,22 +137,15 @@ export default function MapScreen() {
 
                 if (!shouldShow) return null;
 
-                // 3. Render POI
                 return (
-                  <View key={t.id} pointerEvents="none" style={[styles.poiContainer, {
-                    left: `${t.x}%`, 
-                    top: `${t.y}%` 
-                  }]}>
+                  <View key={t.id} pointerEvents="none" style={[styles.poiContainer, { left: `${t.x}%`, top: `${t.y}%` }]}>
                     <Image 
                       source={t.image} 
-                      style={[
-                        styles.poiImage, 
-                        { 
-                          opacity: agenda.some(a => a.id === t.id) ? 0.4 : 1,
-                          borderColor: selectedTask?.id === t.id ? 'white' : 'transparent',
-                          borderWidth: selectedTask?.id === t.id ? 2 : 0,
-                        }
-                      ]} 
+                      style={[styles.poiImage, { 
+                        opacity: agenda.some(a => a.id === t.id) ? 0.4 : 1,
+                        borderColor: selectedTask?.id === t.id ? 'white' : 'transparent',
+                        borderWidth: selectedTask?.id === t.id ? 2 : 0,
+                      }]} 
                     />
                   </View>
                 );
@@ -177,25 +174,10 @@ export default function MapScreen() {
         </View>
 
         {dragging && dragTask && (
-      <View 
-        pointerEvents="none" 
-        style={[
-          styles.ghost, 
-          { 
-            // Adjusted offsets to keep the smaller icon under the finger
-            left: dragPos.x - 40, 
-            top: dragPos.y - 20 
-          }
-        ]}
-      >
-        <Image 
-          source={dragTask.image} 
-          style={{ width: 24, height: 24, borderRadius: 12 }} 
-        />
-        <Text style={styles.ghostText} numberOfLines={1}>
-          {dragTask.title}
-        </Text>
-      </View>
+          <View pointerEvents="none" style={[styles.ghost, { left: dragPos.x - 30, top: dragPos.y - 20 }]}>
+            <Image source={dragTask.image} style={{ width: 24, height: 24, borderRadius: 12 }} />
+            <Text style={styles.ghostText} numberOfLines={1}>{dragTask.title}</Text>
+          </View>
         )}
       </View>
     </SafeAreaView>
@@ -207,23 +189,8 @@ const styles = StyleSheet.create({
   sidebarWrapper: { position: 'absolute', right: 12, top: 12, alignItems: 'flex-end', zIndex: 10 },
   sidebarCard: { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 20, elevation: 10, alignSelf: 'flex-start', maxHeight: Dimensions.get('window').height * 0.75, overflow: 'hidden' },
   toggle: { height: 44, width: 44, alignItems: 'center', justifyContent: 'center' },
-  poiContainer: {
-    position: "absolute",
-    width: 24,  // Reduced from 40
-    height: 24, // Reduced from 40
-    // Half of 24 is 12, so we move it back by 12 to center it
-    transform: [{ translateX: -12 }, { translateY: -12 }], 
-    shadowColor: "#fff",
-    shadowRadius: 6,
-    shadowOpacity: 0.8,
-  },
-  poiImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12, // Half of 24 for a perfect circle
-    backgroundColor: 'white',
-    borderWidth: 1, // Thinner border for smaller icon
-  },
+  poiContainer: { position: "absolute", width: 24, height: 24, transform: [{ translateX: -12 }, { translateY: -12 }] },
+  poiImage: { width: '100%', height: '100%', borderRadius: 12, backgroundColor: 'white', borderWidth: 1 },
   ghost: { position: "absolute", zIndex: 9999, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', padding: 10, borderRadius: 20, elevation: 15 },
   ghostText: { marginLeft: 8, fontSize: 11, fontWeight: 'bold', color: '#334155' }
 });

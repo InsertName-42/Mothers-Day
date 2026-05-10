@@ -1,7 +1,6 @@
 import React from "react";
 import { ScrollView, Text, View, Pressable, StyleSheet } from "react-native";
 import { useAgenda } from "./agendaContext";
-import { TypeBadge } from "./(tabs)/instructions";
 
 export default function Sidebar({ mode, selectedTask, onItemSelect, onDragStart }) {
   const { agenda, toggleChecked } = useAgenda();
@@ -12,7 +11,6 @@ export default function Sidebar({ mode, selectedTask, onItemSelect, onDragStart 
         {mode === "task" && selectedTask ? (
           <View style={styles.detailView}>
             <View style={styles.badgeRow}>
-              <TypeBadge type={selectedTask.type} />
               <View style={styles.scoreBadge}><Text style={styles.scoreText}>{selectedTask.score} PTS</Text></View>
             </View>
             <Text style={styles.taskTitle}>{selectedTask.title}</Text>
