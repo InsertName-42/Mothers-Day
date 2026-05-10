@@ -1,3 +1,4 @@
+// app/(tabs)/_layout.jsx
 import { Tabs } from "expo-router";
 import { Image, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -27,61 +28,24 @@ export default function TabLayout() {
         tabBarStyle: {
           borderTopWidth: 0.5,
           borderTopColor: "#e5e7eb",
-          // Height = icon area + bottom safe area (home indicator / nav buttons)
           height: 56 + insets.bottom,
           paddingBottom: insets.bottom,
           paddingTop: 6,
         },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              source={require("../../assets/images/icon-instructions.png")}
-              label="Info"
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="map"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              source={require("../../assets/images/icon-map.png")}
-              label="Map"
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="punchbowl"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              source={require("../../assets/images/icon-punchbowl.png")}
-              label="Punchbowl"
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="sealrock"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              source={require("../../assets/images/icon-sealrock.png")}
-              label="Seal Rock"
-              focused={focused}
-            />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{
+        tabBarIcon: ({ focused }) => <TabIcon source={require("../../assets/images/icon-instructions.png")} label="Info" focused={focused} />
+      }} />
+      <Tabs.Screen name="map" options={{
+        tabBarIcon: ({ focused }) => <TabIcon source={require("../../assets/images/icon-map.png")} label="Map" focused={focused} />
+      }} />
+      <Tabs.Screen name="punchbowl" options={{
+        tabBarIcon: ({ focused }) => <TabIcon source={require("../../assets/images/icon-punchbowl.png")} label="Punchbowl" focused={focused} />
+      }} />
+      <Tabs.Screen name="sealrock" options={{
+        tabBarIcon: ({ focused }) => <TabIcon source={require("../../assets/images/icon-sealrock.png")} label="Seal Rock" focused={focused} />
+      }} />
     </Tabs>
   );
 }

@@ -1,6 +1,6 @@
 import { ScrollView, Text, View, Pressable } from "react-native";
 import { useAgenda } from "./agendaContext";
-import { TypeBadge } from "./(tabs)/index";
+import { TypeBadge } from "./(tabs)/instructions";
 
 export default function Sidebar({ mode, selectedTask }) {
   const { agenda, removeTask, toggleChecked } = useAgenda();
