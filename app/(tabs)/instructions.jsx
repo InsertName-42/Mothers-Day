@@ -9,7 +9,8 @@ export function TypeBadge({ type }) {
     head:    { bg: "#FAEEDA", text: "#633806", label: "Head to Head" },
     judge:   { bg: "#FAECE7", text: "#712B13", label: "Judged" },
     special: { bg: "#E6F1FB", text: "#0C447C", label: "Special" },
-    group:   { bg: "#E8F0FE", text: "#185FA5", label: "Group" }
+    group:   { bg: "#E8F0FE", text: "#185FA5", label: "Group" },
+    glow:   { bg: "#fff9db", text: "#c9df08", label: "No Location" },
   };
 
   
@@ -24,9 +25,10 @@ export function TypeBadge({ type }) {
 const EVENT_TYPES = [
   { type: "single", desc: "Complete once — get your points." },
   { type: "time", desc: "Completed when enjoyed for the indicated amount of time." },
-  { type: "head", desc: "Compete to outdo the other team." },
+  { type: "head", desc: "Compete to outdo opponents." },
   { type: "judge", desc: "Scored and judged by our special guest judge." },
-  { type: "group", desc: "Completed with all players present. Participation is required." }
+  { type: "group", desc: "Completed with all players present. Participation is required." },
+  {type: "glow", desc: "Icons that glow yellow indicate tasks with no set location."}
 ];
 
 const SCHEDULE = [

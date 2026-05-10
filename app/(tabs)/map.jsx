@@ -115,9 +115,9 @@ export default function MapScreen() {
             <View style={{ width: imgLayout.w, height: imgLayout.h }}>
               <Image 
                 source={
-                  activeTab === 'punchbowl' ? require("../../assets/images/postcard-punchbowl.png") :
-                  activeTab === 'sealrock' ? require("../../assets/images/postcard-sealrock.png") :
-                  require("../../assets/images/map-newport.png")
+                  activeTab === 'punchbowl' ? require("../../assets/images/postcardPunchbowl.png") :
+                  activeTab === 'sealrock' ? require("../../assets/images/postcardSealrock.png") :
+                  require("../../assets/images/mapNewport.png")
                 } 
                 style={StyleSheet.absoluteFill} 
                 contentFit={activeTab === 'map' ? "contain" : "cover"} 
@@ -136,20 +136,25 @@ export default function MapScreen() {
                 }
 
                 if (!shouldShow) return null;
+  const isSelected = selectedTask?.id === t.id;
 
-                return (
-                  <View key={t.id} pointerEvents="none" style={[styles.poiContainer, { left: `${t.x}%`, top: `${t.y}%` }]}>
-                    <Image 
-                      source={t.image} 
-                      style={[styles.poiImage, { 
-                        opacity: agenda.some(a => a.id === t.id) ? 0.4 : 1,
-                        borderColor: selectedTask?.id === t.id ? 'white' : 'transparent',
-                        borderWidth: selectedTask?.id === t.id ? 2 : 0,
-                      }]} 
-                    />
-                  </View>
-                );
-              })}
+      return (
+      <View
+        key={t.id}
+        pointerEvents="none"
+        style={[styles.poiContainer, { left: `${t.x}%`, top: `${t.y}%` }]}
+      >
+        <View style={[styles.poiGlowWrapper, t.glow && styles.poiGlow]}>
+          <View style={styles.poiImageClip}>
+            <Image
+              source={t.image}
+              style={[styles.poiImage, { opacity: agenda.some(a => a.id === t.id) ? 0.4 : 1 }]}
+            />
+          </View>
+        </View>
+      </View>
+    );
+    })}
             </View>
           </ReactNativeZoomableView>
         </View>
@@ -189,8 +194,12 @@ const styles = StyleSheet.create({
   sidebarWrapper: { position: 'absolute', right: 12, top: 12, alignItems: 'flex-end', zIndex: 10 },
   sidebarCard: { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 20, elevation: 10, alignSelf: 'flex-start', maxHeight: Dimensions.get('window').height * 0.75, overflow: 'hidden' },
   toggle: { height: 44, width: 44, alignItems: 'center', justifyContent: 'center' },
-  poiContainer: { position: "absolute", width: 24, height: 24, transform: [{ translateX: -12 }, { translateY: -12 }] },
-  poiImage: { width: '100%', height: '100%', borderRadius: 12, backgroundColor: 'white', borderWidth: 1 },
-  ghost: { position: "absolute", zIndex: 9999, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', padding: 10, borderRadius: 20, elevation: 15 },
-  ghostText: { marginLeft: 8, fontSize: 11, fontWeight: 'bold', color: '#334155' }
+  poiContainer: { position: "absolute", width: 52, height: 52, transform: [{ translateX: -26 }, { translateY: -26 }], alignItems: 'center', justifyContent: 'center' },
+  poiImageWrapper: { width: 24, height: 24, borderRadius: 12, overflow: 'hidden' },
+  poiImage: { width: 24, height: 24 },
+  poiSelected: { borderColor: 'white', borderWidth: 2 },
+  poiGlowWrapper: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  poiImageClip: { width: 24, height: 24, borderRadius: 12, overflow: 'hidden' },
+  poiGlow: { backgroundColor: 'rgba(255, 217, 0, 0.22)', shadowColor: '#ffd700', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 1, shadowRadius: 20, elevation: 20 },  ghost: { position: "absolute", zIndex: 9999, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', padding: 10, borderRadius: 20, elevation: 15 },
+  ghostText: { marginLeft: 8, fontSize: 11, fontWeight: 'bold', color: '#334155' },
 });

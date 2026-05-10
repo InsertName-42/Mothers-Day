@@ -29,7 +29,7 @@ export const TASKS = [
     type: "single",
     score: 30,
     desc: "Recreate the poses of four different statues outside of Ripley Believe it or Not.",
-    x: 51.6, y: 59.7,
+    x: 70, y: 53.7,
     image: Icons.believeOrNot
   },
   {
@@ -102,7 +102,7 @@ export const TASKS = [
     minutes: 30,
     score: 75,
     desc: "Explore 3 art galleries for 10 minutes each.",
-    x: 39.4, y: 40.3,
+    x: 47.4, y: 42.3,
     image: Icons.paint,
     glow: true
   },
@@ -113,7 +113,7 @@ export const TASKS = [
     minutes: 10,
     score: 60,
     desc: "Soak up the dangerous beauty of Devils Punchbowl Natural Area for at least 10 minutes.",
-    x: 50, y: 2.5,
+    x: 28, y: 3.5,
     image: Icons.devilsPunchbowl
   },
   {

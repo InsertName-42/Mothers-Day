@@ -44,7 +44,7 @@ export default function TabLayout() {
         name="index" 
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon source={require("../../assets/images/icon-instructions.png")} label="Info" focused={focused} />
+            <TabIcon source={require("../../assets/images/iconInstructions.png")} label="Info" focused={focused} />
           )
         }} 
       />
@@ -54,7 +54,7 @@ export default function TabLayout() {
         name="map" 
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon source={require("../../assets/images/icon-map.png")} label="Map" focused={focused} />
+            <TabIcon source={require("../../assets/images/iconMap.png")} label="Map" focused={focused} />
           )
         }} 
       />
@@ -64,7 +64,7 @@ export default function TabLayout() {
         name="punchbowl" 
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon source={require("../../assets/images/icon-punchbowl.png")} label="Punchbowl" focused={focused} />
+            <TabIcon source={require("../../assets/images/iconPunchbowl.png")} label="Punchbowl" focused={focused} />
           )
         }} 
       />
@@ -74,7 +74,7 @@ export default function TabLayout() {
         name="sealrock" 
         options={{
           tabBarIcon: ({ focused }) => (
-            <TabIcon source={require("../../assets/images/icon-sealrock.png")} label="Seal Rock" focused={focused} />
+            <TabIcon source={require("../../assets/images/iconSealrock.png")} label="Seal Rock" focused={focused} />
           )
         }} 
       />
