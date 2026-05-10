@@ -1,69 +1,42 @@
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View, Pressable } from "react-native";
 import { useAgenda } from "./agendaContext";
 import { TypeBadge } from "./(tabs)/index";
 
-// mode: "task" shows a task detail; "agenda" shows the agenda list
-export default function Sidebar({ mode, selectedTask, onClose }) {
+export default function Sidebar({ mode, selectedTask }) {
   const { agenda, removeTask, toggleChecked } = useAgenda();
-  const [collapsed, setCollapsed] = useState(false);
-
-  if (collapsed) {
-    return (
-      <Pressable
-        onPress={() => setCollapsed(false)}
-        style={{
-          width: 28,
-          borderLeftWidth: 0.5,
-          borderLeftColor: "#e5e7eb",
-          backgroundColor: "white",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Text style={{ fontSize: 12, color: "#888" }}>▶</Text>
-      </Pressable>
-    );
-  }
 
   return (
-    <View style={{ width: 200, borderLeftWidth: 0.5, borderLeftColor: "#e5e7eb", backgroundColor: "white" }}>
-      {/* Collapse toggle */}
-      <Pressable
-        onPress={() => setCollapsed(true)}
-        style={{ height: 32, alignItems: "center", justifyContent: "center", borderBottomWidth: 0.5, borderBottomColor: "#e5e7eb" }}
+    <View style={{ backgroundColor: "transparent" }}>
+      <ScrollView 
+        contentContainerStyle={{ padding: 12, gap: 10 }}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={{ fontSize: 12, color: "#888" }}>◀</Text>
-      </Pressable>
-
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 10, gap: 8 }}>
-
-        {/* Task detail mode */}
         {mode === "task" && selectedTask && (
-          <View>
+          <View style={{ alignSelf: 'stretch' }}>
             <TypeBadge type={selectedTask.type} />
-            <Text style={{ fontWeight: "600", fontSize: 13, marginTop: 6, marginBottom: 4, color: "#1f2937" }}>
-              #{selectedTask.id} — {selectedTask.title}
+            <Text style={{ fontWeight: "700", fontSize: 15, marginTop: 8, marginBottom: 4, color: "#1e293b" }}>
+              {selectedTask.title}
             </Text>
-            <Text style={{ fontSize: 12, color: "#6b7280", lineHeight: 18 }}>
+            <Text style={{ fontSize: 13, color: "#64748b", lineHeight: 20 }}>
               {selectedTask.desc}
             </Text>
-            <Text style={{ fontSize: 10, color: "#9ca3af", marginTop: 10, textAlign: "center" }}>
-              Hold & drag on map to add to agenda
-            </Text>
+            <View style={{ marginTop: 15, padding: 8, backgroundColor: '#f1f5f9', borderRadius: 8 }}>
+               <Text style={{ fontSize: 10, color: "#94a3b8", textAlign: "center", fontWeight: '700' }}>
+                DRAG TO ADD
+              </Text>
+            </View>
           </View>
         )}
 
-        {/* Agenda mode */}
         {mode === "agenda" && (
-          <View style={{ gap: 6 }}>
-            <Text style={{ fontSize: 11, fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 2 }}>
+          <View style={{ gap: 8, alignSelf: 'stretch' }}>
+            <Text style={{ fontSize: 11, fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: 1 }}>
               My Agenda
             </Text>
 
             {agenda.length === 0 && (
-              <Text style={{ fontSize: 11, color: "#d1d5db", textAlign: "center", paddingVertical: 16 }}>
-                Hold & drag a point{"\n"}to add it here
+              <Text style={{ fontSize: 12, color: "#94a3b8", textAlign: "center", paddingVertical: 15 }}>
+                Empty
               </Text>
             )}
 
@@ -72,50 +45,36 @@ export default function Sidebar({ mode, selectedTask, onClose }) {
                 key={task.id}
                 style={{
                   flexDirection: "row",
-                  alignItems: "flex-start",
-                  gap: 6,
-                  backgroundColor: "white",
-                  borderWidth: 0.5,
-                  borderColor: "#e5e7eb",
-                  borderRadius: 8,
-                  padding: 7,
+                  alignItems: "center",
+                  gap: 8,
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  borderWidth: 1,
+                  borderColor: "#f1f5f9",
+                  borderRadius: 10,
+                  padding: 8,
                 }}
               >
-                {/* Checkbox */}
                 <Pressable onPress={() => toggleChecked(task.id)}>
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 3,
-                      borderWidth: 1.5,
-                      borderColor: task.checked ? "#534AB7" : "#d1d5db",
-                      backgroundColor: task.checked ? "#534AB7" : "transparent",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: 1,
-                    }}
-                  >
+                  <View style={{
+                    width: 16, height: 16, borderRadius: 4, borderWidth: 2,
+                    borderColor: task.checked ? "#6366f1" : "#cbd5e1",
+                    backgroundColor: task.checked ? "#6366f1" : "transparent",
+                    alignItems: "center", justifyContent: "center"
+                  }}>
                     {task.checked && <Text style={{ color: "white", fontSize: 9 }}>✓</Text>}
                   </View>
                 </Pressable>
 
-                {/* Title */}
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 11,
-                    color: task.checked ? "#9ca3af" : "#1f2937",
-                    textDecorationLine: task.checked ? "line-through" : "none",
-                    lineHeight: 16,
-                  }}
-                >
-                  #{task.id} {task.title}
+                <Text numberOfLines={2} style={{
+                  flex: 1, fontSize: 11, fontWeight: '500',
+                  color: task.checked ? "#94a3b8" : "#1e293b",
+                  textDecorationLine: task.checked ? "line-through" : "none"
+                }}>
+                  {task.title}
                 </Text>
 
-                {/* Remove */}
                 <Pressable onPress={() => removeTask(task.id)}>
-                  <Text style={{ color: "#d1d5db", fontSize: 16, lineHeight: 16 }}>×</Text>
+                  <Text style={{ color: "#ef4444", fontSize: 16 }}>×</Text>
                 </Pressable>
               </View>
             ))}
