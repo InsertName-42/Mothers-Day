@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Dimensions, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
@@ -12,20 +12,19 @@ const MAP_IMAGE_W = 2025;
 const MAP_IMAGE_H = 2700;
 
 export default function MapScreen() {
-  const { agenda, addTask } = useAgenda();
+  const { agenda, addTask, removeTask, moveTask } = useAgenda();
   const segments = useSegments();
   const zoomableViewRef = useRef(null);
-  
-  // Detect current tab from the URL segments
-  // segments will look like ["(tabs)", "punchbowl"] or ["(tabs)", "map"]
-  const activeTab = segments[segments.length - 1];
+  const activeTab = segments[segments.length - 1] === "(tabs)" ? "map" : segments[segments.length - 1];
 
   const [selectedTask, setSelectedTask] = useState(null);
   const [sidebarMode, setSidebarMode] = useState("agenda");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // Drag State
   const [dragging, setDragging] = useState(false);
   const [dragTask, setDragTask] = useState(null);
+  const [dragSource, setDragSource] = useState(null); 
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
   const [imgLayout, setImgLayout] = useState({ w: 0, h: 0, vW: 0 });
 
@@ -36,117 +35,167 @@ export default function MapScreen() {
     setImgLayout({ w: width, h: width / imgAspect, vW: width });
   }, []);
 
-  const handleMapTap = (event) => {
-    if (activeTab !== 'map') {
-      setSidebarMode("agenda");
-      return;
-    }
-    const { locationX, locationY } = event.nativeEvent;
-    const pctX = (locationX / imgLayout.w) * 100;
-    const pctY = (locationY / imgLayout.h) * 100;
-
-    const found = TASKS.find(t => Math.sqrt(Math.pow(t.x - pctX, 2) + Math.pow(t.y - pctY, 2)) < 5);
-    if (found) {
-      setSelectedTask(found);
-      setSidebarMode("task");
-      setSidebarCollapsed(false);
-    } else {
-      setSelectedTask(null);
-      setSidebarMode("agenda");
-    }
+  const findClosestPOI = (pctX, pctY) => {
+    const currentPOI = activeTab === 'punchbowl' ? 9 : (activeTab === 'sealrock' ? 11 : null);
+    const tasksToSearch = activeTab === 'map' ? TASKS : TASKS.filter(t => t.id === currentPOI);
+    let closest = null;
+    let minDistance = 8; 
+    tasksToSearch.forEach(t => {
+      const d = Math.sqrt(Math.pow(t.x - pctX, 2) + Math.pow(t.y - pctY, 2));
+      if (d < minDistance) { minDistance = d; closest = t; }
+    });
+    return closest;
   };
 
-  const renderContent = () => {
-    if (activeTab === 'punchbowl') {
-      const task = TASKS.find(t => t.id === 15);
-      return (
-        <View style={styles.postcardContainer}>
-          <Image source={require("../../assets/images/postcard-punchbowl.png")} style={styles.postcardImage} contentFit="contain" />
-          <View style={styles.notecard}>
-            <Text style={styles.notecardTitle}>{task?.title}</Text>
-            <Text style={styles.notecardText}>Watch waves crash into this dramatic collapsed sea cave bowl.</Text>
-          </View>
-        </View>
-      );
-    }
+  const handleTouchEnd = (e) => {
+    if (!dragging || !dragTask) return;
+    const { pageX, pageY } = e.nativeEvent;
+    const isOverSidebar = pageX > imgLayout.vW * 0.6;
 
-    if (activeTab === 'sealrock') {
-      const task = TASKS.find(t => t.id === 11);
-      return (
-        <View style={styles.postcardContainer}>
-          <Image source={require("../../assets/images/postcard-sealrock.png")} style={styles.postcardImage} contentFit="contain" />
-          <View style={styles.notecard}>
-            <Text style={styles.notecardTitle}>{task?.title}</Text>
-            <Text style={styles.notecardText}>Spot seals basking on the rocks during low tide.</Text>
-          </View>
-        </View>
-      );
+    if (dragSource === 'map' && isOverSidebar) {
+      const dropY = pageY - 80;
+      const index = Math.max(0, Math.floor(dropY / 75));
+      addTask(dragTask, index);
+    } else if (dragSource === 'sidebar') {
+      if (!isOverSidebar) {
+        removeTask(dragTask.id);
+      } else {
+        const dropY = pageY - 80;
+        const index = Math.max(0, Math.floor(dropY / 75));
+        moveTask(agenda.findIndex(t => t.id === dragTask.id), index);
+      }
     }
-
-    return (
-      <ReactNativeZoomableView
-        ref={zoomableViewRef}
-        maxZoom={5} minZoom={1} bindToBorders={true}
-        panEnabled={!dragging} pinchEnabled={!dragging}
-        onSingleTap={handleMapTap}
-        onLongPress={(e) => {
-          if (activeTab !== 'map') return;
-          const { locationX, locationY, pageX, pageY } = e.nativeEvent;
-          const pctX = (locationX / imgLayout.w) * 100;
-          const pctY = (locationY / imgLayout.h) * 100;
-          const found = TASKS.find(t => Math.sqrt(Math.pow(t.x - pctX, 2) + Math.pow(t.y - pctY, 2)) < 5);
-          if (found) {
-            setDragTask(found);
-            setDragPos({ x: pageX, y: pageY });
-            setDragging(true);
-            setSidebarMode("agenda");
-            setSidebarCollapsed(false);
-          }
-        }}
-      >
-        <View style={{ width: imgLayout.w, height: imgLayout.h }}>
-          <Image source={require("../../assets/images/map-newport.png")} style={StyleSheet.absoluteFill} contentFit="contain" />
-          {TASKS.map((t) => (
-            <View key={t.id} pointerEvents="none" style={[styles.poi, {
-              left: `${t.x}%`, top: `${t.y}%`,
-              opacity: selectedTask?.id === t.id ? 1 : 0.7,
-              backgroundColor: agenda.some(a => a.id === t.id) ? '#94a3b8' : selectedTask?.id === t.id ? 'white' : TYPE_COLORS[t.type],
-              borderColor: selectedTask?.id === t.id ? TYPE_COLORS[t.type] : 'rgba(255,255,255,0.8)',
-            }]} />
-          ))}
-        </View>
-      </ReactNativeZoomableView>
-    );
+    setDragging(false); setDragTask(null); setDragSource(null);
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#0f172a" }} edges={['top']}>
       <View style={{ flex: 1 }} 
+        // THIS IS THE FIX: Hijack touch responder from ZoomableView when dragging
         onStartShouldSetResponder={() => dragging}
         onMoveShouldSetResponder={() => dragging}
-        onTouchMove={(e) => { if (dragging) setDragPos({ x: e.nativeEvent.pageX, y: e.nativeEvent.pageY }); }}
-        onTouchEnd={(e) => {
-          if (dragging && dragTask && e.nativeEvent.pageX > imgLayout.vW * 0.6) addTask(dragTask);
-          setDragging(false); setDragTask(null);
+        onTouchMove={(e) => { 
+          if (dragging) setDragPos({ x: e.nativeEvent.pageX, y: e.nativeEvent.pageY }); 
         }}
+        onTouchEnd={handleTouchEnd}
       >
         <View style={styles.viewerContainer} onLayout={onLayout}>
-          {renderContent()}
+          <ReactNativeZoomableView
+            ref={zoomableViewRef}
+            maxZoom={5} minZoom={1} bindToBorders={true}
+            panEnabled={!dragging} pinchEnabled={!dragging}
+            onSingleTap={(e) => {
+              const pctX = (e.nativeEvent.locationX / imgLayout.w) * 100;
+              const pctY = (e.nativeEvent.locationY / imgLayout.h) * 100;
+              const found = findClosestPOI(pctX, pctY);
+              if (found) { setSelectedTask(found); setSidebarMode("task"); setSidebarCollapsed(false); }
+              else { setSelectedTask(null); setSidebarMode("agenda"); }
+            }}
+            onLongPress={(e) => {
+              const pctX = (e.nativeEvent.locationX / imgLayout.w) * 100;
+              const pctY = (e.nativeEvent.locationY / imgLayout.h) * 100;
+              const found = findClosestPOI(pctX, pctY);
+              if (found) {
+                setDragTask(found); setDragSource('map');
+                setDragPos({ x: e.nativeEvent.pageX, y: e.nativeEvent.pageY });
+                setDragging(true); setSidebarMode("agenda"); setSidebarCollapsed(false);
+              }
+            }}
+          >
+            <View style={{ width: imgLayout.w, height: imgLayout.h }}>
+              <Image 
+                source={
+                  activeTab === 'punchbowl' ? require("../../assets/images/postcard-punchbowl.png") :
+                  activeTab === 'sealrock' ? require("../../assets/images/postcard-sealrock.png") :
+                  require("../../assets/images/map-newport.png")
+                } 
+                style={StyleSheet.absoluteFill} 
+                contentFit={activeTab === 'map' ? "contain" : "cover"} 
+              />
+              {TASKS.map((t) => {
+                // 1. Define which IDs belong to which postcard tab
+                const punchbowlIDs = [9]; 
+                const sealRockIDs = [11, 19]; // Added 19 as an exception here
+
+                // 2. Visibility Logic
+                let shouldShow = false;
+
+                if (activeTab === 'map') {
+                  // Hide postcard-specific tasks from the main overview map
+                  if (!punchbowlIDs.includes(t.id) && !sealRockIDs.includes(t.id)) {
+                    shouldShow = true;
+                  }
+                } else if (activeTab === 'punchbowl') {
+                  if (punchbowlIDs.includes(t.id)) shouldShow = true;
+                } else if (activeTab === 'sealrock') {
+                  if (sealRockIDs.includes(t.id)) shouldShow = true;
+                }
+
+                if (!shouldShow) return null;
+
+                // 3. Render POI
+                return (
+                  <View key={t.id} pointerEvents="none" style={[styles.poiContainer, {
+                    left: `${t.x}%`, 
+                    top: `${t.y}%` 
+                  }]}>
+                    <Image 
+                      source={t.image} 
+                      style={[
+                        styles.poiImage, 
+                        { 
+                          opacity: agenda.some(a => a.id === t.id) ? 0.4 : 1,
+                          borderColor: selectedTask?.id === t.id ? 'white' : 'transparent',
+                          borderWidth: selectedTask?.id === t.id ? 2 : 0,
+                        }
+                      ]} 
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          </ReactNativeZoomableView>
         </View>
 
         <View style={styles.sidebarWrapper} pointerEvents="box-none">
-          <View style={[styles.sidebarCard, { width: sidebarCollapsed ? 44 : 180 }]}>
+          <View style={[styles.sidebarCard, { width: sidebarCollapsed ? 44 : 200 }]}>
             <Pressable onPress={() => setSidebarCollapsed(!sidebarCollapsed)} style={styles.toggle}>
               <Text style={{ color: '#64748b', fontSize: 18 }}>{sidebarCollapsed ? "◀" : "▶"}</Text>
             </Pressable>
-            {!sidebarCollapsed && <Sidebar mode={activeTab !== 'map' ? 'agenda' : sidebarMode} selectedTask={selectedTask} />}
+            {!sidebarCollapsed && (
+              <Sidebar 
+                mode={sidebarMode} 
+                selectedTask={selectedTask}
+                onItemSelect={(t) => { setSelectedTask(t); setSidebarMode(t ? "task" : "agenda"); }}
+                onDragStart={(task, x, y) => {
+                  setDragTask(task); setDragSource('sidebar');
+                  setDragPos({ x, y }); setDragging(true);
+                }}
+              />
+            )}
           </View>
         </View>
 
         {dragging && dragTask && (
-          <View pointerEvents="none" style={[styles.ghost, { left: dragPos.x - 20, top: dragPos.y - 20 }]}>
-            <View style={[styles.ghostIcon, { backgroundColor: TYPE_COLORS[dragTask.type] }]} />
-          </View>
+      <View 
+        pointerEvents="none" 
+        style={[
+          styles.ghost, 
+          { 
+            // Adjusted offsets to keep the smaller icon under the finger
+            left: dragPos.x - 40, 
+            top: dragPos.y - 20 
+          }
+        ]}
+      >
+        <Image 
+          source={dragTask.image} 
+          style={{ width: 24, height: 24, borderRadius: 12 }} 
+        />
+        <Text style={styles.ghostText} numberOfLines={1}>
+          {dragTask.title}
+        </Text>
+      </View>
         )}
       </View>
     </SafeAreaView>
@@ -155,15 +204,26 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   viewerContainer: { flex: 1 },
-  sidebarWrapper: { position: 'absolute', right: 12, top: 12, bottom: 20, alignItems: 'flex-end' },
-  sidebarCard: { backgroundColor: 'rgba(255, 255, 255, 0.96)', borderRadius: 20, overflow: 'hidden', elevation: 10, maxHeight: '90%' },
+  sidebarWrapper: { position: 'absolute', right: 12, top: 12, alignItems: 'flex-end', zIndex: 10 },
+  sidebarCard: { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: 20, elevation: 10, alignSelf: 'flex-start', maxHeight: Dimensions.get('window').height * 0.75, overflow: 'hidden' },
   toggle: { height: 44, width: 44, alignItems: 'center', justifyContent: 'center' },
-  poi: { position: "absolute", width: 14, height: 14, borderRadius: 7, borderWidth: 1.5, transform: [{ translateX: -7 }, { translateY: -7 }] },
-  postcardContainer: { flex: 1, padding: 20, justifyContent: 'center', alignItems: 'center' },
-  postcardImage: { width: '100%', height: '80%' },
-  notecard: { position: 'absolute', bottom: '15%', backgroundColor: '#fef3c7', padding: 15, borderRadius: 4, width: '65%', elevation: 5, transform: [{ rotate: '-1deg' }] },
-  notecardTitle: { fontWeight: 'bold', fontSize: 16, color: '#92400e', marginBottom: 4 },
-  notecardText: { fontSize: 13, color: '#b45309', fontStyle: 'italic' },
-  ghost: { position: "absolute", zIndex: 1000 },
-  ghostIcon: { width: 40, height: 40, borderRadius: 20, borderWidth: 2, borderColor: 'white' }
+  poiContainer: {
+    position: "absolute",
+    width: 24,  // Reduced from 40
+    height: 24, // Reduced from 40
+    // Half of 24 is 12, so we move it back by 12 to center it
+    transform: [{ translateX: -12 }, { translateY: -12 }], 
+    shadowColor: "#fff",
+    shadowRadius: 6,
+    shadowOpacity: 0.8,
+  },
+  poiImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12, // Half of 24 for a perfect circle
+    backgroundColor: 'white',
+    borderWidth: 1, // Thinner border for smaller icon
+  },
+  ghost: { position: "absolute", zIndex: 9999, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', padding: 10, borderRadius: 20, elevation: 15 },
+  ghostText: { marginLeft: 8, fontSize: 11, fontWeight: 'bold', color: '#334155' }
 });

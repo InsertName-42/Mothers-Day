@@ -1,104 +1,167 @@
-// All scavenger hunt tasks with their map positions (as % of image size)
-// x/y are percentage values 0-100 so they work on any screen size
 export const TASKS = [
   {
-    id: 3,
-    title: "Find a sea urchin",
+    id: 1,
+    title: "Ripley's Statues",
     type: "single",
-    desc: "Yaquina Head Outstanding Natural Area. Search the tide pools for sea urchins along the rocky shore.",
-    x: 18, y: 14,
-  },
-  {
-    id: 16,
-    title: "Selfie with the lighthouse",
-    type: "single",
-    desc: "Take a selfie with the iconic Yaquina Head Lighthouse — tallest on the Oregon coast at 93 feet.",
-    x: 16, y: 18,
-  },
-  {
-    id: 4,
-    title: "See a sea lion",
-    type: "single",
-    desc: "See a sea lion at the Newport Sea Lion Docks. Free admission — watch them lounge on the floating docks!",
-    x: 22, y: 32,
+    score: 30,
+    desc: "Recreate the poses of four different statues outside of Ripley Believe it or Not.",
+    x: 28, y: 35,
+    image: require("../assets/images/believeOrNot.jpg")
   },
   {
     id: 15,
-    title: "Taste test candy",
+    title: "Candy Taste Test",
     type: "single",
-    desc: "Try taffy from Newport Candy Shop AND Belinda's Candies. Cast your vote — which is better?",
+    score: 45,
+    desc: "Try taffy from Newport Candy Shoppe and Newport Candy Basket and add your vote to the discourse.",
     x: 30, y: 30,
+    image: require("../assets/images/candy.jpg")
   },
   {
-    id: 12,
-    title: "Whale mural selfies",
-    type: "head",
-    desc: "Take selfies with the most murals featuring whales around Newport. Most murals wins!",
-    x: 35, y: 33,
+    id: 11,
+    title: "Seal Rock (the Rock)",
+    type: "single",
+    score: 50,
+    desc: "Enjoy the natural beauty of seal rock (and don’t forget to check out the bonus challenge).",
+    x: 14, y: 60,
+    image: require("../assets/images/seal.jpg")
   },
   {
     id: 6,
-    title: "Ocean to Bay Trail",
+    title: "Ocean Bay Trail",
     type: "single",
-    desc: "Hike the Ocean to Bay Trail — 0.67 miles connecting Nye Beach to Yaquina Bay.",
+    score: 50,
+    desc: "Hike the beautiful Ocean Bay Trail for .67 miles, and attempt to spot the most fungi.",
     x: 20, y: 42,
+    image: require("../assets/images/oceanTrail.jpg")
   },
   {
-    id: 5,
-    title: "Best sand castle",
-    type: "judge",
-    desc: "Build the best sand castle at Nye Beach! Judged on creativity, size, and craftsmanship.",
-    x: 16, y: 46,
+    id: 4,
+    title: "Sea Lion Docks",
+    type: "single",
+    score: 30,
+    desc: "Spot a sea lion at the sea lion docks.",
+    x: 22, y: 32,
+    image: require("../assets/images/seaLion.jpg")
   },
   {
-    id: 13,
-    title: "Find the most sea glass",
-    type: "head",
-    desc: "Scour the beaches for the most sea glass. The collector with the most pieces wins.",
-    x: 14, y: 50,
+    id: 3,
+    title: "Yaquina Tide Pools",
+    type: "single",
+    score: 75,
+    desc: "Find a sea urchin and a sea anemone plus one of starfish or sea cucumber at Yaquina Head outstanding natural area.",
+    x: 18, y: 14,
+    image: require("../assets/images/tidepools.jpg")
   },
   {
-    id: 7,
-    title: "Visual Arts Center",
-    type: "time",
-    desc: "Explore Newport Visual Arts Center — free admission. Features rotating exhibitions from local and regional artists.",
-    x: 28, y: 53,
+    id: 16,
+    title: "Lighthouse Pose",
+    type: "single",
+    score: 25,
+    desc: "Pose as a lighthouse with Yaquina Head lighthouse.",
+    x: 16, y: 18,
+    image: require("../assets/images/lighthouse.jpg")
+  },
+  {
+    id: 17,
+    title: "Life's Spice",
+    type: "single",
+    score: 30,
+    desc: "Meet at 12:30 and have a unique order at Georgie’s beachside grill.",
+    x: 25, y: 48,
+    image: require("../assets/images/lunch.jpg")
   },
   {
     id: 14,
-    title: "Explore 3 art galleries",
+    title: "Art Gallery Exploration",
     type: "time",
-    desc: "Find and explore at least 3 art galleries around Newport. Document each visit.",
+    minutes: 30,
+    score: 75,
+    desc: "Explore 3 art galleries for 10 minutes each.",
     x: 36, y: 56,
+    image: require("../assets/images/paint.jpg")
   },
   {
     id: 9,
     title: "Devil's Punchbowl",
     type: "time",
-    desc: "Visit Devil's Punchbowl Natural Area — free. Watch waves crash into this dramatic collapsed sea cave bowl.",
+    minutes: 10,
+    score: 60,
+    desc: "Soak up the dangerous beauty of Devils Punchbowl Natural Area for at least 10 minutes.",
     x: 15, y: 23,
+    image: require("../assets/images/devilsPunchbowl.jpg")
   },
   {
-    id: 11,
-    title: "Spot seals at Seal Rock",
-    type: "single",
-    desc: "Spot some seals on the Seal Rock State Recreation Area Trail — 0.4 miles along the bluff.",
-    x: 14, y: 60,
+    id: 7,
+    title: "Visual Arts Center",
+    type: "time",
+    minutes: 15,
+    score: 30,
+    desc: "Explore Newport Visual arts center for at least 15 minutes.",
+    x: 28, y: 53,
+    image: require("../assets/images/artCenter.jpg")
   },
   {
     id: 8,
-    title: "Hatfield Marine Science Ctr",
-    type: "special",
-    desc: "Hatfield Marine Science Visitor Center — $5 per person. Interactive exhibits on ocean science and marine life.",
+    title: "Science Center",
+    type: "time",
+    minutes: 25,
+    score: 35,
+    desc: "Spend 25 minutes in Hatfield Marine Science visitor center ($5 per person)",
     x: 48, y: 68,
+    image: require("../assets/images/scienceCenter.jpg")
   },
+  {
+    id: 13,
+    title: "Sea Glass Hunt",
+    type: "head",
+    score: 60,
+    desc: "Find the most sea glass on Newport's beaches.",
+    x: 14, y: 50,
+    image: require("../assets/images/seaGlass.jpg")
+  },
+  {
+    id: 12,
+    title: "Whale Mural Search",
+    type: "head",
+    score: 60,
+    desc: "Take the most selfies with murals featuring whales.",
+    x: 35, y: 33,
+    image: require("../assets/images/whale.jpg")
+  },
+  {
+    id: 5,
+    title: "Sand Castle Kickoff",
+    type: "judge",
+    score: 100,
+    desc: "For the kickoff challenge! Build the best sand castle at Nye beach!",
+    x: 35.6, y: 36.8,
+    image: require("../assets/images/sandCastle.jpg")
+  },
+  {
+    id: 18,
+    title: "Picture Newport",
+    type: "single",
+    score: 50,
+    desc: "Take the goofiest and most Newport group photo",
+    x: 40, y: 40,
+    image: require("../assets/images/camera.jpg")
+  },
+  {
+    id: 19,
+    title: "The Seal",
+    type: "judge",
+    score: 50,
+    desc: "Photograph a seal at seal rock.",
+    x: 50, y: 50,
+    image: require("../assets/images/bonus.jpg")
+  }
 ];
 
-// Colors for each event type
 export const TYPE_COLORS = {
   single:  "#1D9E75",
   time:    "#534AB7",
   head:    "#BA7517",
   judge:   "#D85A30",
-  special: "#185FA5",
+  group:   "#185FA5",
 };

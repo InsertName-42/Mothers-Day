@@ -1,82 +1,39 @@
-import { ScrollView, Text, View, Pressable } from "react-native";
+import React from "react";
+import { ScrollView, Text, View, Pressable, StyleSheet } from "react-native";
 import { useAgenda } from "./agendaContext";
 import { TypeBadge } from "./(tabs)/instructions";
 
-export default function Sidebar({ mode, selectedTask }) {
-  const { agenda, removeTask, toggleChecked } = useAgenda();
+export default function Sidebar({ mode, selectedTask, onItemSelect, onDragStart }) {
+  const { agenda, toggleChecked } = useAgenda();
 
   return (
-    <View style={{ backgroundColor: "transparent" }}>
-      <ScrollView 
-        contentContainerStyle={{ padding: 12, gap: 10 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {mode === "task" && selectedTask && (
-          <View style={{ alignSelf: 'stretch' }}>
-            <TypeBadge type={selectedTask.type} />
-            <Text style={{ fontWeight: "700", fontSize: 15, marginTop: 8, marginBottom: 4, color: "#1e293b" }}>
-              {selectedTask.title}
-            </Text>
-            <Text style={{ fontSize: 13, color: "#64748b", lineHeight: 20 }}>
-              {selectedTask.desc}
-            </Text>
-            <View style={{ marginTop: 15, padding: 8, backgroundColor: '#f1f5f9', borderRadius: 8 }}>
-               <Text style={{ fontSize: 10, color: "#94a3b8", textAlign: "center", fontWeight: '700' }}>
-                DRAG TO ADD
-              </Text>
+    <View style={styles.container}>
+      <ScrollView style={{ flexShrink: 1 }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true} alwaysBounceVertical={false}>
+        {mode === "task" && selectedTask ? (
+          <View style={styles.detailView}>
+            <View style={styles.badgeRow}>
+              <TypeBadge type={selectedTask.type} />
+              <View style={styles.scoreBadge}><Text style={styles.scoreText}>{selectedTask.score} PTS</Text></View>
             </View>
-          </View>
-        )}
-
-        {mode === "agenda" && (
-          <View style={{ gap: 8, alignSelf: 'stretch' }}>
-            <Text style={{ fontSize: 11, fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: 1 }}>
-              My Agenda
-            </Text>
-
-            {agenda.length === 0 && (
-              <Text style={{ fontSize: 12, color: "#94a3b8", textAlign: "center", paddingVertical: 15 }}>
-                Empty
-              </Text>
-            )}
-
-            {agenda.map((task) => (
-              <View
-                key={task.id}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 8,
-                  backgroundColor: "rgba(255,255,255,0.7)",
-                  borderWidth: 1,
-                  borderColor: "#f1f5f9",
-                  borderRadius: 10,
-                  padding: 8,
-                }}
-              >
-                <Pressable onPress={() => toggleChecked(task.id)}>
-                  <View style={{
-                    width: 16, height: 16, borderRadius: 4, borderWidth: 2,
-                    borderColor: task.checked ? "#6366f1" : "#cbd5e1",
-                    backgroundColor: task.checked ? "#6366f1" : "transparent",
-                    alignItems: "center", justifyContent: "center"
-                  }}>
-                    {task.checked && <Text style={{ color: "white", fontSize: 9 }}>✓</Text>}
-                  </View>
-                </Pressable>
-
-                <Text numberOfLines={2} style={{
-                  flex: 1, fontSize: 11, fontWeight: '500',
-                  color: task.checked ? "#94a3b8" : "#1e293b",
-                  textDecorationLine: task.checked ? "line-through" : "none"
-                }}>
-                  {task.title}
-                </Text>
-
-                <Pressable onPress={() => removeTask(task.id)}>
-                  <Text style={{ color: "#ef4444", fontSize: 16 }}>×</Text>
-                </Pressable>
+            <Text style={styles.taskTitle}>{selectedTask.title}</Text>
+            {selectedTask.minutes && (
+              <View style={styles.timeRow}>
+                <Text style={styles.timeLabel}>⏱ Time: </Text><Text style={styles.timeValue}>{selectedTask.minutes} mins</Text>
               </View>
+            )}
+            <Text style={styles.taskDesc}>{selectedTask.desc}</Text>
+            <Pressable onPress={() => onItemSelect(null)} style={styles.backButton}><Text style={styles.backButtonText}>← BACK</Text></Pressable>
+          </View>
+        ) : (
+          <View>
+            <Text style={styles.header}>AGENDA</Text>
+            {agenda.length === 0 ? <Text style={styles.emptyText}>Drag items here</Text> : agenda.map((task, index) => (
+              <Pressable key={`${task.id}-${index}`} onPress={() => onItemSelect(task)} onLongPress={(e) => onDragStart(task, e.nativeEvent.pageX, e.nativeEvent.pageY)} delayLongPress={200} style={styles.agendaItem}>
+                <View style={styles.row}>
+                  <Pressable onPress={() => toggleChecked(task.id)} style={[styles.checkbox, task.checked && styles.checkboxChecked]}>{task.checked && <Text style={styles.checkMark}>✓</Text>}</Pressable>
+                  <Text numberOfLines={2} style={[styles.itemText, task.checked && styles.textChecked]}>{task.title}</Text>
+                </View>
+              </Pressable>
             ))}
           </View>
         )}
@@ -84,3 +41,26 @@ export default function Sidebar({ mode, selectedTask }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { width: '100%' }, scrollContent: { padding: 12, paddingBottom: 24 },
+  badgeRow: { flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 4 },
+  scoreBadge: { backgroundColor: '#fef3c7', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4, borderWidth: 1, borderColor: '#f59e0b' },
+  scoreText: { fontSize: 10, fontWeight: '800', color: '#b45309' },
+  timeRow: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
+  timeLabel: { fontSize: 11, color: '#64748b', fontWeight: '600' },
+  timeValue: { fontSize: 11, color: '#534AB7', fontWeight: '700' },
+  header: { fontSize: 10, fontWeight: "900", color: "#94a3b8", letterSpacing: 1, marginBottom: 15, textAlign: 'center' },
+  taskTitle: { fontWeight: "700", fontSize: 16, marginTop: 10, marginBottom: 6, color: "#1e293b" },
+  taskDesc: { fontSize: 12, color: "#64748b", lineHeight: 18, marginBottom: 20 },
+  backButton: { padding: 10, backgroundColor: "#f1f5f9", borderRadius: 10, alignItems: "center" },
+  backButtonText: { fontSize: 10, fontWeight: "800", color: "#64748b" },
+  agendaItem: { backgroundColor: "white", padding: 12, borderRadius: 12, borderWidth: 1, borderColor: "#f1f5f9", marginBottom: 8, elevation: 1 },
+  row: { flexDirection: "row", alignItems: "center", gap: 10 },
+  checkbox: { width: 18, height: 18, borderRadius: 6, borderWidth: 2, borderColor: "#cbd5e1", alignItems: "center", justifyContent: "center" },
+  checkboxChecked: { backgroundColor: "#6366f1", borderColor: "#6366f1" },
+  checkMark: { color: "white", fontSize: 10, fontWeight: "bold" },
+  itemText: { flex: 1, fontSize: 12, fontWeight: "600", color: "#334155" },
+  textChecked: { color: "#94a3b8", textDecorationLine: "line-through" },
+  emptyText: { fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 40 }
+});

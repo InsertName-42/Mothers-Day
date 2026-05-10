@@ -9,6 +9,7 @@ export function TypeBadge({ type }) {
     head:    { bg: "#FAEEDA", text: "#633806", label: "Head to Head" },
     judge:   { bg: "#FAECE7", text: "#712B13", label: "Judged" },
     special: { bg: "#E6F1FB", text: "#0C447C", label: "Special" },
+    group:   { bg: "#E8F0FE", text: "#185FA5", label: "Group" }
   };
   const s = styles[type] || styles.single;
   return (
@@ -19,11 +20,11 @@ export function TypeBadge({ type }) {
 }
 
 const EVENT_TYPES = [
-  { type: "single", desc: "Complete once — no competition required." },
-  { type: "time", desc: "Must be completed during open hours." },
-  { type: "head", desc: "Compete directly against another player." },
-  { type: "judge", desc: "Scored and judged on quality." },
-  { type: "special", desc: "Requires paid or ticketed entry." },
+  { type: "single", desc: "Complete once — get your points." },
+  { type: "time", desc: "Completed when enjoyed for the indicated amount of time." },
+  { type: "head", desc: "Compete to outdo the other team." },
+  { type: "judge", desc: "Scored and judged by our special guest judge." },
+  { type: "group", desc: "Completed with all players present. Participation is required." }
 ];
 
 export default function InstructionsScreen() {
@@ -32,10 +33,62 @@ export default function InstructionsScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.hero}>
           <Text style={styles.eyebrow}>Newport, Oregon</Text>
-          <Text style={styles.title}>Scavenger{"\n"}Hunt</Text>
+          <Text style={styles.title}>The Ultimate Battle{"\n"}of the Moms</Text>
           <View style={styles.divider} />
-          <Text style={styles.subtitle}>Explore the Oregon coast — find tide pools, art, wildlife, and hidden corners of Newport.</Text>
+          <Text style={styles.subtitle}>Discover, build, taste, and learn as you uncover the hidden corners of Newport.</Text>
         </View>
+
+        {/* APP GUIDE SECTION ─── */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>How to use the App</Text>
+          <View style={styles.cardStack}>
+            <View style={styles.guideItem}>
+              <Text style={styles.guideEmoji}>📍</Text>
+              <View style={{flex: 1}}>
+                <Text style={styles.guideTitle}>Explore the Map</Text>
+                <Text style={styles.guideText}>Pinch or double click to zoom and drag to pan. Tap task icons to see details and point values.</Text>
+              </View>
+            </View>
+            <View style={styles.guideItem}>
+              <Text style={styles.guideEmoji}>📝</Text>
+              <View style={{flex: 1}}>
+                <Text style={styles.guideTitle}>Plan your Agenda</Text>
+                <Text style={styles.guideText}>Long-press a task icon to "pick it up," then drag it into the sidebar to add it to your agenda. Click anywhere empty to open the agenda.</Text>
+              </View>
+            </View>
+            <View style={styles.guideItem}>
+              <Text style={styles.guideEmoji}>🔄</Text>
+              <View style={{flex: 1}}>
+                <Text style={styles.guideTitle}>Organize & Remove</Text>
+                <Text style={styles.guideText}>In the sidebar, drag items up or down to reorder. Drag an item out left onto the map to remove it.</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* ─── GAME RULES SECTION ─── */}
+        <View style={[styles.section, { backgroundColor: '#fef3c7', marginHorizontal: 24, borderRadius: 15, marginTop: 10 }]}>
+          <Text style={[styles.sectionLabel, { color: '#92400e' }]}>The Rules of War</Text>
+          <View style={{ gap: 12 }}>
+            <Text style={styles.ruleText}>1. <Text style={{fontWeight: '700'}}>Point System:</Text> Each task has a designated point value.</Text>
+            <Text style={styles.ruleText}>2. <Text style={{fontWeight: '700'}}>Proof Required:</Text> Every completed task must be documented via photo or video.</Text>
+            <Text style={styles.ruleText}>3. <Text style={{fontWeight: '700'}}>The Judge's Word:</Text> The Guest Judge's decision is final and non-negotiable.</Text>
+            <Text style={styles.ruleText}>3. <Text style={{fontWeight: '700'}}>Dinner Council:</Text> Meet at 6:30 for dinner, debrief, and the Final Word from the Guest Judge.</Text>
+          </View>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Schedule</Text>
+          <View style={{ gap: 10 }}>
+            <Text style={styles.typeDesc}>
+10:00am- Go to Nye beach for a kickoff challenge!
+12:30pm- Go to Georgie's beachside grill for lunch and lunch challenge
+1:30- head to ocean to bay trail for challenge and bonus prize reveal
+6:30- Go to chosen dinner location for dinner, debrief, and the final word from our special guest judge
+7:30- The final challenge! Meet back at Nye beach for a sunset game of pictionary, 10 points per game!
+            </Text>
+          </View>
+        </View>
+
 
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Event Types</Text>
@@ -54,13 +107,19 @@ export default function InstructionsScreen() {
 }
 
 const styles = StyleSheet.create({
-  hero: { backgroundColor: "#1a3a4a", padding: 24, paddingTop: 40 },
+  hero: { backgroundColor: "#1a3a4a", padding: 24, paddingTop: 60, paddingBottom: 40 },
   eyebrow: { fontSize: 10, fontWeight: "700", letterSpacing: 2.5, color: "#7ecfbd", textTransform: "uppercase", marginBottom: 10 },
   title: { fontSize: 30, fontWeight: "800", color: "#ffffff", lineHeight: 36, marginBottom: 10 },
   divider: { width: 40, height: 2, backgroundColor: "#7ecfbd", marginBottom: 12 },
   subtitle: { fontSize: 13, color: "#94adb8", lineHeight: 20, maxWidth: 280 },
   section: { padding: 24 },
-  sectionLabel: { fontSize: 10, fontWeight: "700", letterSpacing: 2, color: "#534AB7", textTransform: "uppercase", marginBottom: 16 },
+  sectionLabel: { fontSize: 10, fontWeight: "900", color: "#534AB7", letterSpacing: 2, textTransform: "uppercase", marginBottom: 16 },
+  cardStack: { gap: 12 },
+  guideItem: { flexDirection: 'row', gap: 15, alignItems: 'center' },
+  guideEmoji: { fontSize: 24 },
+  guideTitle: { fontSize: 14, fontWeight: '700', color: '#1e293b', marginBottom: 2 },
+  guideText: { fontSize: 12, color: '#64748b', lineHeight: 18 },
+  ruleText: { fontSize: 13, color: '#92400e', lineHeight: 20 },
   typeRow: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: "#ffffff", borderRadius: 10, padding: 12, borderWidth: 1, borderColor: "#ede9e2" },
   typeDesc: { flex: 1, fontSize: 12, color: "#6b7280", lineHeight: 17 }
 });
